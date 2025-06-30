@@ -30,7 +30,7 @@ filmes = buscar_filmes_disponiveis()
 
 if clientes and filmes:
     cliente_opcoes = {f"{c['nome']} ({c['email']})": c["id"] for c in clientes}
-    filme_opcoes = {f"{f['modelo']} ({f['marca']})": f["id"] for f in filmes}
+    filme_opcoes = {f"{f['titulo']} ({f['genero']}) - {f['ano']}": f["id"] for f in filmes}
 
     with st.form("nova_reserva"):
         cliente_selecionado = st.selectbox("Cliente", list(cliente_opcoes.keys()))
@@ -55,9 +55,10 @@ if clientes and filmes:
             res = requests.post(f"{API_BASE}/reservas", json=payload)
             if res.status_code == 200:
                 st.success("✅ Reserva realizada com sucesso!")
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error(f"❌ Erro ao criar reserva: {res.json().get('error')}")
+
 else:
     st.warning("Você precisa ter clientes e filmes disponíveis para criar uma reserva.")
 
@@ -82,15 +83,11 @@ try:
             resp_del = requests.delete(f"{API_BASE}/reservas/{id_reserva}")
             if resp_del.status_code == 200:
                 st.success("Reserva cancelada com sucesso!")
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Erro ao cancelar reserva.")
     else:
         st.info("Nenhuma reserva encontrada.")
-
-except Exception as e:
-    st.error(f"Erro ao buscar reservas: {e}")
-
 
 except Exception as e:
     st.error(f"Erro ao buscar reservas: {e}")
